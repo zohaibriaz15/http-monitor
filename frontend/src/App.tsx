@@ -8,7 +8,7 @@ import AnomalyChart from './components/AnomalyChart';
 import AnomalyPanel from './components/AnomalyPanel';
 
 export default function App() {
-  const { results, stats, analysis, loading, error, connection, newestId } = useMonitorData();
+  const { results, stats, analysis, loading, error, connection, newestId, page, setPage, totalPages, total } = useMonitorData();
   const [triggering, setTriggering] = useState(false);
   const [triggerError, setTriggerError] = useState<string | null>(null);
 
@@ -61,26 +61,31 @@ export default function App() {
         <StatsBar stats={stats} />
       </div>
 
-      {/* Anomaly detection: live latency chart + rolling stats/alerts panel. */}
-      <section className="mb-6 grid gap-4 lg:grid-cols-3">
-        <div className="lg:col-span-2">
-          <AnomalyChart points={analysis?.points ?? []} />
-        </div>
-        <div className="lg:col-span-1">
-          <AnomalyPanel analysis={analysis} />
-        </div>
-      </section>
+      <div className="mb-4">
+        <AnomalyChart points={analysis?.points ?? []} />
+      </div>
+
+      <div className="mb-6">
+        <AnomalyPanel analysis={analysis} />
+      </div>
 
       {loading ? (
         <div className="rounded-xl border border-slate-700 bg-slate-800/60 p-10 text-center text-slate-400">
           Loading…
         </div>
       ) : (
-        <ResultsTable results={results} newestId={newestId} />
+        <ResultsTable
+          results={results}
+          newestId={newestId}
+          page={page}
+          totalPages={totalPages}
+          total={total}
+          onPageChange={setPage}
+        />
       )}
 
       <footer className="mt-6 text-center text-xs text-slate-500">
-        Showing the {results.length} most recent results · updates live via WebSocket
+        {total} total results · page {page} of {totalPages} · updates live via WebSocket
       </footer>
     </div>
   );

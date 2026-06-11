@@ -33,7 +33,7 @@ function Row({ record, isNew }: { record: MonitorResult; isNew: boolean }) {
         </td>
         <td className="hidden px-3 py-2.5 sm:table-cell">{String(payload.eventType ?? '—')}</td>
         <td className="hidden px-3 py-2.5 sm:table-cell">{String(payload.region ?? '—')}</td>
-        <td className="hidden px-3 py-2.5 font-mono text-xs text-slate-400 md:table-cell">
+        <td className="hidden px-3 py-2.5 font-mono text-xs text-slate-400 md:table-cell whitespace-nowrap">
           {String(payload.id ?? '—')}
         </td>
         <td className="px-3 py-2.5 text-center text-slate-500">{open ? '▾' : '▸'}</td>
@@ -71,11 +71,19 @@ function Row({ record, isNew }: { record: MonitorResult; isNew: boolean }) {
 export default function ResultsTable({
   results,
   newestId,
+  page,
+  totalPages,
+  total,
+  onPageChange,
 }: {
   results: MonitorResult[];
   newestId: number | null;
+  page: number;
+  totalPages: number;
+  total: number;
+  onPageChange: (page: number) => void;
 }) {
-  if (!results.length) {
+  if (!results.length && page === 1) {
     return (
       <div className="rounded-xl border border-slate-700 bg-slate-800/60 p-10 text-center text-slate-400">
         No data yet. Waiting for the first monitor result…
@@ -104,6 +112,30 @@ export default function ResultsTable({
           ))}
         </tbody>
       </table>
+
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between border-t border-slate-700 px-4 py-3">
+          <span className="text-xs text-slate-400">
+            {total} results · page {page} of {totalPages}
+          </span>
+          <div className="flex gap-2">
+            <button
+              onClick={() => onPageChange(page - 1)}
+              disabled={page === 1}
+              className="rounded-lg border border-slate-600 px-3 py-1.5 text-xs text-slate-300 transition hover:border-slate-400 hover:text-white disabled:cursor-default disabled:opacity-40"
+            >
+              ← Previous
+            </button>
+            <button
+              onClick={() => onPageChange(page + 1)}
+              disabled={page === totalPages}
+              className="rounded-lg border border-slate-600 px-3 py-1.5 text-xs text-slate-300 transition hover:border-slate-400 hover:text-white disabled:cursor-default disabled:opacity-40"
+            >
+              Next →
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

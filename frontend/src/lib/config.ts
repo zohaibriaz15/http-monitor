@@ -6,6 +6,7 @@ export const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:4000/ws';
 // Max rows to keep in the table / fetch on load. The backend caps page size at
 // 100; we mirror that so the table stays snappy and memory stays bounded.
 export const MAX_ROWS = 100;
+export const PAGE_SIZE = 25;
 
 // Max analysis points kept on the chart (24h @ 5-min cadence ≈ 288).
 export const MAX_ANALYSIS_POINTS = 500;

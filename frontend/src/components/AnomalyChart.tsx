@@ -18,7 +18,7 @@ const COLORS = {
   mean: '#4f9cf9',
   predicted: '#a78bfa',
   band: '#4f9cf9',
-  anomaly: '#f85149',
+  anomaly: '#f59e0b',
 };
 
 function formatTime(iso: string): string {
@@ -49,7 +49,7 @@ function ChartTooltip({ active, payload, label }: any) {
           Band: {fmt(row.band[0])}–{fmt(row.band[1])} ms
         </div>
       )}
-      {row.anomalyValue != null && <div className="font-semibold text-fail">⚠ Anomaly</div>}
+      {row.anomalyValue != null && <div className="font-semibold text-amber-400">⚠ Anomaly</div>}
     </div>
   );
 }

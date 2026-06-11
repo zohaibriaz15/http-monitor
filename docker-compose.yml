@@ -1,0 +1,55 @@
+# Full local stack: `docker compose up --build` starts Postgres, the backend
+# (which migrates on boot), and the frontend. Then open http://localhost:5173.
+#
+# Note: stop any local dev servers first — this maps host ports 4000 (backend)
+# and 5173 (frontend). Postgres is published on 5433 to avoid clashing with a
+# local Postgres on 5432.
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: http_monitor
+      POSTGRES_PASSWORD: http_monitor
+      POSTGRES_DB: http_monitor
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U http_monitor"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    environment:
+      NODE_ENV: production
+      PORT: "4000"
+      DATABASE_URL: postgresql://http_monitor:http_monitor@db:5432/http_monitor
+      CORS_ORIGIN: "*"
+      MONITOR_RUN_ON_BOOT: "true"
+    ports:
+      - "4000:4000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        # Baked into the bundle at build time; the browser (on the host) reaches
+        # the backend via its published localhost port.
+        VITE_API_BASE: http://localhost:4000
+        VITE_WS_URL: ws://localhost:4000/ws
+    environment:
+      PORT: "4173"
+    ports:
+      - "5173:4173"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:

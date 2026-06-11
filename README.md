@@ -4,11 +4,13 @@
 
 Pings `httpbin.org/anything` on a schedule, stores results in PostgreSQL, and streams live updates to a React dashboard.
 
-```
-Scheduler → MonitorService → PostgreSQL
-                           → WebSocket → React Dashboard
-                           ← REST API ←
-```
+**Every 5 minutes:**
+1. `Scheduler` triggers `MonitorService`
+2. `MonitorService` pings httpbin, saves result to `PostgreSQL`, and pushes the update over `WebSocket`
+3. `React Dashboard` receives the live push instantly via WebSocket
+
+**On page load / pagination:**
+- `React Dashboard` fetches existing records from `PostgreSQL` via `REST API`
 
 ---
 

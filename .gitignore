@@ -1,5 +1,25 @@
 # OS / editor cruft
 .DS_Store
+Thumbs.db
 *.log
 
-# Dependencies / build output are ignored per-package (backend/, frontend/)
+# Secrets — never commit real env files
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Test coverage
+coverage/
+
+# TypeScript incremental build info
+*.tsbuildinfo
+
+# Docker override (local only)
+docker-compose.override.yml

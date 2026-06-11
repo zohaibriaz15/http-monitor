@@ -1,0 +1,11 @@
+node_modules
+coverage
+tests
+*.log
+.env
+.env.*
+.git
+.eslintrc.json
+jest.config.js
+Dockerfile
+.dockerignore
